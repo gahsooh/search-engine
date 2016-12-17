@@ -1,6 +1,6 @@
 from chalice import Chalice
 
-app = Chalice(app_name='search-engine')
+app = Chalice(app_name='search-engine-api')
 
 
 @app.route('/')
