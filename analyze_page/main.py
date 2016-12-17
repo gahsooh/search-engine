@@ -75,7 +75,8 @@ if __name__ == '__main__':
     tf_rdd = (barrels_rdd
               .map(lambda x: x['tf'])
               .flatMap(lambda (docID, tf_list): ((docID, tf) for tf in tf_list))
-              .map(lambda (docID, (word, score)): (word_to_wordID[word], (docID, score)))
+              .map(lambda (docID, (word, score)): 
+                          (word_to_wordID[word], (docID, score)))
               .cache())
  
     print 'start get df'
@@ -88,20 +89,26 @@ if __name__ == '__main__':
     print 'start get tfidf'
     tfidf_rdd = (tf_rdd
                   .join(df_rdd)
-                  .map(lambda (wordID, ((docID, tf_score), df_score)): ((wordID, docID), round(tf_score * df_score, 5)))
+                  .map(lambda (wordID, ((docID, tf_score), df_score)): 
+                              ((wordID, docID), round(tf_score * df_score, 5)))
                   .cache())
     
     print 'start inverted index'
     inverted_index_rdd = (barrels_rdd
                           .map(lambda x: x['elems'])
-                          .flatMap(lambda (docID, elem_list): ((docID, elem) for elem in elem_list))
-                          .map(lambda (docID, (word, elem)): ((word_to_wordID[word], docID), elem))
+                          .flatMap(lambda (docID, elem_list): 
+                                          ((docID, elem) for elem in elem_list))
+                          .map(lambda (docID, (word, elem)): 
+                                      ((word_to_wordID[word], docID), elem))
                           .join(tfidf_rdd)
-                          .map(lambda ((wordID, docID), ((header, style, title), tfidf)): (docID, (wordID, tfidf, header, style, title)))
+                          .map(lambda ((wordID, docID), ((header, style, title), tfidf)): 
+                                      (docID, (wordID, tfidf, header, style, title)))
                           .join(ranks_rdd)
-                          .map(lambda (docID, ((wordID, tfidf, header, style, title), rank)): (wordID, (docID, tfidf, header, style, title, rank))))
+                          .map(lambda (docID, ((wordID, tfidf, header, style, title), rank)): 
+                                      (wordID, (docID, tfidf, header, style, title, rank))))
     
-    (inverted_index_rdd.map(lambda (w_id, (d, tfidf, h, s, title, r)): (w_id, {
+    (inverted_index_rdd.map(lambda (w_id, (d, tfidf, h, s, title, r)): 
+                                    (w_id, {
                                     "doc_id": d, 
                                     "tfidf": tfidf, 
                                     "header": h, 
