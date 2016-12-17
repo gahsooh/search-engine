@@ -40,9 +40,12 @@ if __name__ == '__main__':
                           .distinct()
                           .zipWithIndex()
                           .cache())
-    (word_to_wordID_rdd.map(lambda (w, w_id): {"word": w, "word_id": w_id})
-                                            .map(lambda x: json.dumps(x))
-                                            .saveAsTextFile('data/word_list'))
+    (word_to_wordID_rdd.map(lambda (w, w_id): {
+                                    "word": w, 
+                                    "word_id": w_id
+                                  })
+                                  .map(lambda x: json.dumps(x))
+                                  .saveAsTextFile('data/word_list'))
 
     word_to_wordID = word_to_wordID_rdd.collectAsMap()
 #     wordID_to_word = word_to_wordID_rdd.map(lambda (x, y): (y, x)).collectAsMap()
@@ -50,14 +53,19 @@ if __name__ == '__main__':
     print 'start store document list'
     documents_rdd = barrels_rdd.map(lambda x: (x['docID'], x['title'], x['url'], x['content']))
     (documents_rdd.distinct()
-                                  .map(lambda (d, t, u, c): {"doc_id": d, "title": t, "url": u, "content": c})
-                                  .map(lambda x: json.dumps(x))
-                                  .saveAsTextFile('data/documents'))
+                  .map(lambda (d, t, u, c): {
+                              "doc_id": d, 
+                              "title": t, 
+                              "url": u, 
+                              "content": c
+                            })
+                            .map(lambda x: json.dumps(x))
+                            .saveAsTextFile('data/documents'))
         
     print 'start links'
     links_rdd = (links_rdd
-                 .flatMap(lambda x: x)
-                 .filter(lambda (url1, url2): url2 != -1))
+                  .flatMap(lambda x: x)
+                  .filter(lambda (url1, url2): url2 != -1))
     
     print 'start get pagerank'
     docID_rdd = url_to_docID_rdd.values()
@@ -79,9 +87,9 @@ if __name__ == '__main__':
     
     print 'start get tfidf'
     tfidf_rdd = (tf_rdd
-                 .join(df_rdd)
-                 .map(lambda (wordID, ((docID, tf_score), df_score)): ((wordID, docID), round(tf_score * df_score, 5)))
-                 .cache())
+                  .join(df_rdd)
+                  .map(lambda (wordID, ((docID, tf_score), df_score)): ((wordID, docID), round(tf_score * df_score, 5)))
+                  .cache())
     
     print 'start inverted index'
     inverted_index_rdd = (barrels_rdd
@@ -93,11 +101,17 @@ if __name__ == '__main__':
                           .join(ranks_rdd)
                           .map(lambda (docID, ((wordID, tfidf, header, style, title), rank)): (wordID, (docID, tfidf, header, style, title, rank))))
     
-    (inverted_index_rdd.map(lambda (w_id, (d, tfidf, h, s, title, r)): (w_id, {"doc_id": d, "tfidf": tfidf, "header": h, "style": s, "title": title, "pagerank": r}))
-                                 .groupByKey()
-                                 .map(lambda (wordID, elem): {"word_id": wordID, "index": list(elem)})
-                                 .map(lambda x: json.dumps(x))
-                                 .saveAsTextFile('data/inverted_index'))
+    (inverted_index_rdd.map(lambda (w_id, (d, tfidf, h, s, title, r)): (w_id, {
+                                    "doc_id": d, 
+                                    "tfidf": tfidf, 
+                                    "header": h, 
+                                    "style": s, 
+                                    "title": title, 
+                                    "pagerank": r}))
+                                  .groupByKey()
+                                  .map(lambda (wordID, elem): {"word_id": wordID, "index": list(elem)})
+                                  .map(lambda x: json.dumps(x))
+                                  .saveAsTextFile('data/inverted_index'))
     
 ###################################################################
         
