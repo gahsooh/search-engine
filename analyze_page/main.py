@@ -18,11 +18,11 @@ if __name__ == '__main__':
     worker_size = 5
     
     print 'start load'
-    blog_rdd = (load.load_ameblo(sc)
+    page_rdd = (load.load_ameblo(sc)
                 .map(util.encode))
     
     print 'start make map'
-    url_to_docID_rdd = (blog_rdd
+    url_to_docID_rdd = (page_rdd
                         .map(parser.get_url)
                         .distinct()
                         .zipWithIndex()
@@ -30,9 +30,9 @@ if __name__ == '__main__':
     url_to_docID = url_to_docID_rdd.collectAsMap()
     
     print 'start parse'
-    parsed_blog_rdd = blog_rdd.map(lambda x: parser.parse_blog(x, url_to_docID))
-    barrels_rdd = parsed_blog_rdd.keys()
-    links_rdd = parsed_blog_rdd.values()
+    parsed_page_rdd = page_rdd.map(lambda x: parser.parse_page(x, url_to_docID))
+    barrels_rdd = parsed_page_rdd.keys()
+    links_rdd = parsed_page_rdd.values()
     
     print 'start make wordID list'
     word_to_wordID_rdd = (barrels_rdd

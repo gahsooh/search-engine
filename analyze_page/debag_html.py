@@ -4,9 +4,9 @@ from pyspark import SparkConf, SparkContext
 import util
 import load_local as load
 
-def get_html(blog):
+def get_html(page):
     try:
-      entry_content = blog['entryContent']
+      entry_content = page['entryContent']
       soup = bs(entry_content)
       beautiful_html = soup.prettify()
     except:
@@ -20,7 +20,7 @@ if __name__ == '__main__':
 	sc = SparkContext(appName="Check HTML")
 
 	print 'start'
-	blog_rdd = sc.textFile(load.DATA_PATH).map(util.encode)
-	blog_rdd.map(get_html) \
+	page_rdd = sc.textFile(load.DATA_PATH).map(util.encode)
+	page_rdd.map(get_html) \
 			.saveAsTextFile('./debag/html')
 	print 'ok'

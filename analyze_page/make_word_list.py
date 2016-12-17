@@ -20,17 +20,17 @@ if __name__ == '__main__':
     print datetime.datetime.today()
     
     print 'start load'
-    blog_rdd = sc.textFile(load.DATA_PATH).map(util.encode)
+    page_rdd = sc.textFile(load.DATA_PATH).map(util.encode)
     
     print 'start make map'
     
     print 'start parse'
-    parsed_blog_rdd = blog_rdd.map(lambda blog: parser.parse_blog(blog))
-    parsed_blog_rdd.cache()
-    parsed_blog_rdd.map(lambda x: json.dumps(x)) \
+    parsed_page_rdd = page_rdd.map(lambda page: parser.parse_page(page))
+    parsed_page_rdd.cache()
+    parsed_page_rdd.map(lambda x: json.dumps(x)) \
                    .saveAsTextFile(load.PARSED_PAGE_PATH)
 
-    barrels_rdd = parsed_blog_rdd.keys()
+    barrels_rdd = parsed_page_rdd.keys()
     barrels_rdd.cache()
 
     print 'start store document list'

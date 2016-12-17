@@ -17,8 +17,8 @@ import util
 if __name__ == '__main__':
     sc = SparkContext(appName="Perse Page")
 
-    blog_rdd = sc.textFile(load.DATA_PATH).map(util.encode)
-    blog_rdd.map(lambda blog: parser.parse_blog(blog)) \
+    page_rdd = sc.textFile(load.DATA_PATH).map(util.encode)
+    page_rdd.map(lambda page: parser.parse_page(page)) \
             .filter(lambda (barrels, links): barrels is not None) \
             .filter(lambda (barrels, links): len(barrels['words']) > 20) \
             .map(lambda x: json.dumps(x)) \

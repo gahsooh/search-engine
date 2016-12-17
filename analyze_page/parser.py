@@ -32,9 +32,9 @@ def make_sentence_elem(elems, words, tag, attr, words_in_title):
 
 def parse_page(page):
     try:
-      blog_title = page['blogTitle']
+      page_title = page['pageTitle']
       entry_title = page['entryTitle']
-      title = entry_title + ' | ' + blog_title
+      title = entry_title + ' | ' + page_title
       entry_content = page['entryContent']
       url = get_url(page)
       

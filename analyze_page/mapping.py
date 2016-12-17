@@ -5,14 +5,14 @@ import json
 import load as ld
 
 ### from_entryID_to_docID_map ###
-def get_entryID_to_docID_map(blog_rdd):
-    entryIDs = blog_rdd.map(lambda x: x['entryId']).collect()
+def get_entryID_to_docID_map(page_rdd):
+    entryIDs = page_rdd.map(lambda x: x['entryId']).collect()
     docIDs = xrange(1, len(entryIDs)+1)
     return dict(zip(entryIDs, docIDs))
 
 ### from_url_to_docID_map ###
-def get_url_to_docID_map(blog_rdd):
-    return blog_rdd.map(url_to_docID).collectAsMap()
+def get_url_to_docID_map(page_rdd):
+    return page_rdd.map(url_to_docID).collectAsMap()
 
 def url_to_docID(page): 
     url = to_url(page['amebaId'], page['entryId'])
@@ -23,7 +23,7 @@ def to_url(amebaID, entryID):
     return 'http://ameblo.jp/'+ str(amebaID) +'/entry-'+ str(entryID) +'.html'
 
 ### common ###
-def encode_blog(page):
+def encode_page(page):
     page = page.encode('utf-8') if type(page) == unicode else page
     return json.loads(page)
     

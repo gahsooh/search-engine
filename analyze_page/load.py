@@ -13,6 +13,6 @@ def load_data(sc):
 if __name__ == '__main__':
   from pyspark import SparkConf, SparkContext
   sc = SparkContext(appName="Load Test")
-  blog_rdd = load_data(sc) 
-  for b in blog_rdd.collect():
+  page_rdd = load_data(sc) 
+  for b in page_rdd.collect():
     print b.encode("utf-8")

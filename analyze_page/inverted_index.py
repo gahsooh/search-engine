@@ -24,13 +24,13 @@ if __name__ == '__main__':
     url_docid.cache()
     doc_id_rdd = url_docid.map(lambda (url, doc_id): doc_id)
 
-    parsed_blog_rdd = sc.textFile(load.PARSED_PAGE_PATH).map(util.encode)
-    parsed_blog_rdd.cache()
-    docid_words = parsed_blog_rdd.keys() \
+    parsed_page_rdd = sc.textFile(load.PARSED_PAGE_PATH).map(util.encode)
+    parsed_page_rdd.cache()
+    docid_words = parsed_page_rdd.keys() \
                                   .map(lambda x: (x['url'], x['words'])) \
                                   .join(url_docid) \
                                   .map(lambda (url, (words, doc_id)): (doc_id, words))
-    links_rdd = parsed_blog_rdd.values().flatMap(lambda x: x)
+    links_rdd = parsed_page_rdd.values().flatMap(lambda x: x)
     
     word_word_id = sc.textFile(load.WORD_LIST_PATH).map(util.encode).map(lambda x: (x['word'], x['word_id']))
     
