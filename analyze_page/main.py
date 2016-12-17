@@ -4,7 +4,7 @@ import json, sys, copy, datetime
 from pyspark import SparkConf, SparkContext
 from operator import add
 
-import load
+import load_local
 import pagerank
 import parser
 import util
@@ -18,8 +18,8 @@ if __name__ == '__main__':
     worker_size = 5
     
     print 'start load'
-    page_rdd = (load.load_ameblo(sc)
-                .map(util.encode))
+    page_rdd = (load_local.load_page(sc)
+                          .map(util.encode))
     
     print 'start make map'
     url_to_docID_rdd = (page_rdd
