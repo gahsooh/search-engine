@@ -20,7 +20,7 @@ if __name__ == '__main__':
     print 'start load'
     page_rdd = (load_local.load_page(sc)
                           .map(util.encode))
-    
+
     print 'start make map'
     url_to_docID_rdd = (page_rdd
                         .map(parser.get_url)

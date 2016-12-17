@@ -9,12 +9,12 @@ INVERTED_INDEX_PATH = "../data/min/inverted_index/"
 PARSED_PAGE_PATH = "../data/min/parsed_page/"
 DATA_PATH = "../data/min/raw/page_data_1.txt"
 
-def load_data(sc):
+def load_page(sc):
   return sc.textFile(DATA_PATH)
 
 if __name__ == '__main__':
   sc = SparkContext(appName="Load Test")
-  page_rdd = load_data(sc)
+  page_rdd = load_page(sc)
   print page_rdd.count()
   for b in page_rdd.collect():
     print b.encode("utf-8")
