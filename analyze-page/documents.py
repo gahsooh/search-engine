@@ -7,7 +7,6 @@ import os
 
 #import load_local as load
 import load
-
 import pagerank
 import parser
 import util
