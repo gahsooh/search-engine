@@ -1,5 +1,6 @@
-# using: utf-8
+# -*- coding: utf-8 -*-
 
+from __future__ import print_function # Python 2/3 compatibility
 from pyspark.sql import SQLContext
 from pyspark import SparkConf, SparkContext
 from pyspark.sql.types import *
@@ -12,14 +13,13 @@ if __name__ == '__main__':
 
 	df = (sqlContext.read
 			.format('com.databricks.spark.xml')
-			.options(rowTag='book')
-			# .load('../data/full/raw/extracted/AA/wiki_00.xml'))
+			.options(rowTag='doc')
+			.load('wiki_00.xml'))
 			# .load('books.xml'))
-			.load('../data/min/raw/wiki_min.xml'))
+			# .load('../data/full/raw/extracted/AA/wiki_00.xml'))
 
-	print df.printSchema()
-	print df.show(5)
-	print df.count()
+	print(df.printSchema())
+	print(type(df))
 
 	# (df.select("author", "_id").write
 	# 	.format('com.databricks.spark.xml')
