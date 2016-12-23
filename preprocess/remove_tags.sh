@@ -1,4 +1,6 @@
+echo remove_japanese_tag
 sed -i "" 's/<\([亜-熙ぁ-んァ-ヶ]*\)>/＜\1＞/g' /Users/suganuma/github/search-engine/data/arrange/pages
+echo remove_end_tag
 sed -i "" \
 -e 's/<\/Categorytree>//g' \
 -e 's/<\/RUBY>//g' \
@@ -45,6 +47,7 @@ sed -i "" \
 -e 's/<\/time>//g' \
 -e 's/<\/ul>//g' \
 -e 's/<\/units>)//g' /Users/suganuma/github/search-engine/data/arrange/pages
+echo remove_start_tag
 sed -i "" \
 -e 's/<Categorytree.*>//g' \
 -e 's/<RUBY>//g' \
