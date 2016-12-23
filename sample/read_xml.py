@@ -11,14 +11,21 @@ if __name__ == '__main__':
 	sc = SparkContext("local", "Test Read XML")
 	sqlContext = SQLContext(sc)
 
+	customSchema = StructType([
+		StructField("_id", StringType(), True),
+		StructField("_title", StringType(), True),
+		StructField("_url", StringType(), True),
+		StructField("text", StringType(), True)])
+
 	df = (sqlContext.read
 			.format('com.databricks.spark.xml')
 			.options(rowTag='doc')
-			.load('wiki_00.xml'))
+			.load('wiki', schema = customSchema))
 			# .load('books.xml'))
 			# .load('../data/full/raw/extracted/AA/wiki_00.xml'))
 
 	print(df.printSchema())
+	print(df.count())
 	print(type(df))
 
 	# (df.select("author", "_id").write
