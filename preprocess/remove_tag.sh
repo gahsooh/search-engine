@@ -1,4 +1,4 @@
-sed -i "" 's/<\([亜-熙ぁ-んァ-ヶ]*\)>/＜\1＞/g' wiki
+sed -i "" 's/<\([亜-熙ぁ-んァ-ヶ]*\)>/＜\1＞/g' /Users/suganuma/github/search-engine/data/arrange/pages
 sed -i "" \
 -e 's/<\/Categorytree>//g' \
 -e 's/<\/RUBY>//g' \
@@ -44,7 +44,7 @@ sed -i "" \
 -e 's/<\/td>//g' \
 -e 's/<\/time>//g' \
 -e 's/<\/ul>//g' \
--e 's/<\/units>)//g' wiki
+-e 's/<\/units>)//g' /Users/suganuma/github/search-engine/data/arrange/pages
 sed -i "" \
 -e 's/<Categorytree.*>//g' \
 -e 's/<RUBY>//g' \
@@ -91,4 +91,4 @@ sed -i "" \
 -e 's/<td>//g' \
 -e 's/<time.*>//g' \
 -e 's/<ul.*>//g' \
--e 's/<units.*>//g' wiki
+-e 's/<units.*>//g' /Users/suganuma/github/search-engine/data/arrange/pages
