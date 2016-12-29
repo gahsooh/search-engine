@@ -16,7 +16,7 @@ DATA_PATH_XML = "/Users/suganuma/github/search-engine/data/min/raw/page_data_2.x
 def load_page(sc):
 	return sc.textFile(DATA_PATH)
 
-def xml_to_rdd(sc):
+def xml_to_dataframe(sc):
 	sqlContext = SQLContext(sc)
 
 	xml_format = 'com.databricks.spark.xml'
@@ -29,10 +29,12 @@ def xml_to_rdd(sc):
 
 	df = (sqlContext.read
 			.format(xml_format)
+			.option("charset", "UTF-8")
 			.options(rowTag=xml_root_tag)
 			.load(DATA_PATH_XML, schema = xml_customSchema))
 
-	return df.rdd
+	return df
+
 
 if __name__ == '__main__':
 	sc = SparkContext(appName="Load Test")

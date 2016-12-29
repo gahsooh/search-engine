@@ -26,6 +26,9 @@ if __name__ == '__main__':
 			# .load('../data/full/raw/extracted/AA/wiki_00.xml'))
 
 	print(df.printSchema())
+	print(type(df))
+	print(type(df.rdd))
+	print(df.rdd.count())
 
 	# (df.select("author", "_id").write
 	# 	.format('com.databricks.spark.xml')

@@ -10,9 +10,16 @@ import load_local, util, debug_utils
 if __name__ == '__main__':
 	sc = SparkContext("local", "Main Test")
 
-	page_rdd = (load_local.xml_to_rdd(sc)
-						  .map(util.encode))
+	page_rdd = (load_local.xml_to_dataframe(sc)
+						  .rdd)
+	# page_rdd.show()
 	print page_rdd
 	print type(page_rdd)
 	print page_rdd.collect()
-	# debug_utils.show_rdd(page_rdd)
+	print type(page_rdd.collect())
+	print page_rdd.collect()[0]
+	print type(page_rdd.collect()[0])
+	print page_rdd.collect()[0]._id
+	print page_rdd.collect()[0]._title
+	print page_rdd.collect()[0]._url
+	print page_rdd.collect()[0].text

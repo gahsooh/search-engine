@@ -1,5 +1,7 @@
 echo remove_japanese_tag
 sed -i "" 's/<\([亜-熙ぁ-んァ-ヶ]*\)>/＜\1＞/g' /Users/suganuma/github/search-engine/data/arrange/pages
+echo remove_and
+sed -i "" 's/&/＆/g' /Users/suganuma/github/search-engine/data/arrange/pages
 echo remove_end_tag
 sed -i "" \
 -e 's/<\/Categorytree>//g' \
