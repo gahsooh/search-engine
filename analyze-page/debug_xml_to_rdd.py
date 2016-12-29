@@ -10,8 +10,9 @@ import load_local, util, debug_utils
 if __name__ == '__main__':
 	sc = SparkContext("local", "Main Test")
 
-	page_rdd = (load_local.load_page(sc)
+	page_rdd = (load_local.xml_to_rdd(sc)
 						  .map(util.encode))
 	print page_rdd
 	print type(page_rdd)
-	debug_utils.show_rdd(page_rdd)
+	print page_rdd.collect()
+	# debug_utils.show_rdd(page_rdd)
