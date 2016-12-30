@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup as bs
 import MeCab, jctconv
 from collections import Counter
-import copy
+import copy, re
 
 def get_tf(words):
     tf = Counter(words).most_common()
@@ -101,25 +101,30 @@ def get_barrel(soup, sentences, title, url):
 
 
 def get_barrel_(page):
-    text = page.text
-    title = page._title
-    sentences = split_to_sentences(text)
+    content = page.text.strip()
+    sentences = split_to_sentences(content)
     words_in_sentences = split_to_words(sentences)
-    tf = count_tf(words_in_sentences)
-    content = concat_sentence(sentences)
+    tf_in_page = get_tf(words_in_sentences)
+    words_with_meta = integrate_words_attr(
+        words_in_sentences, page._title, tf_in_page)
 
     barrel = {
-                'doc_id': page._id
-                'url': page._url,
-                'title': title,
-                'content': content,
-                'words': words_with_meta,
-            }
+        'page_id': page._id
+        'title': page._title,
+        'url': page._url,
+        'content': content,
+        'words': words_with_meta,
+    }
 
     return barrel
 
-def analyse_sentence(sentences):
-    elems = {}
+def split_to_sentences(content):
+    sentences = filter(lambda w: len(w) > 0, re.split(ur'。|\.', content))
+    sentences = map(lambda s: s + '。', sentences)
+    return sentences
+
+def split_to_words(sentences):
+    words_in_sentences = []
     for s in sentences:
         words_in_sentence = morphological_analysis(s)
         words_in_sentences += words_in_sentence
