@@ -99,9 +99,39 @@ def get_barrel(soup, sentences, title, url):
     
     return barrel, anchors
 
-def get_url(page):
-    return ''
 
+def get_barrel_(page):
+    text = page.text
+    title = page._title
+    sentences = split_to_sentences(text)
+    words_in_sentences = split_to_words(sentences)
+    tf = count_tf(words_in_sentences)
+    content = concat_sentence(sentences)
+
+    barrel = {
+                'doc_id': page._id
+                'url': page._url,
+                'title': title,
+                'content': content,
+                'words': words_with_meta,
+            }
+
+    return barrel
+
+def analyse_sentence(sentences):
+    elems = {}
+    for s in sentences:
+        words_in_sentence = morphological_analysis(s)
+        words_in_sentences += words_in_sentence
+    return words_in_sentences
+
+def make_sentence_elem(elems, words, title):
+    for w in list(set(words)):
+        if w in words_in_title: continue
+        h = 1 if 'h1' in tag or 'h2' in tag or 'h3' in tag or 'h4' in tag or 'h1' in tag else 0
+        s = 1 if len(attr) > 0 else 0
+        elems.update({w: {'header': h, 'style': s, 'title': 0}})
+    return elems
 
 # 形態素解析
 def morphological_analysis(sentence):
