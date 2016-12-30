@@ -101,15 +101,14 @@ def get_barrel(soup, sentences, title, url):
 
 
 def get_barrel_(page):
-    content = page.text.strip()
-    sentences = split_to_sentences(content)
-    words_in_sentences = split_to_words(sentences)
+    content = flatten_text(page.text)
+    words_in_sentences = morphological_analysis(content)
     tf_in_page = get_tf(words_in_sentences)
     words_with_meta = integrate_words_attr(
         words_in_sentences, page._title, tf_in_page)
 
     barrel = {
-        'page_id': page._id
+        'page_id': page._id,
         'title': page._title,
         'url': page._url,
         'content': content,
@@ -118,30 +117,17 @@ def get_barrel_(page):
 
     return barrel
 
-def split_to_sentences(content):
-    sentences = filter(lambda w: len(w) > 0, re.split(ur'。|\.', content))
-    sentences = map(lambda s: s + '。', sentences)
-    return sentences
+def flatten_text(text):
+    delete = {ord(u'\n'): None}
+    return text.translate(delete)
 
-def split_to_words(sentences):
-    words_in_sentences = []
-    for s in sentences:
-        words_in_sentence = morphological_analysis(s)
-        words_in_sentences += words_in_sentence
-    return words_in_sentences
-
-def make_sentence_elem(elems, words, title):
-    for w in list(set(words)):
-        if w in words_in_title: continue
-        h = 1 if 'h1' in tag or 'h2' in tag or 'h3' in tag or 'h4' in tag or 'h1' in tag else 0
-        s = 1 if len(attr) > 0 else 0
-        elems.update({w: {'header': h, 'style': s, 'title': 0}})
-    return elems
+def integrate_words_attr(words, title, tf):
+    return [(w, (w == title, tf[w])) for w in words]
 
 # 形態素解析
 def morphological_analysis(sentence):
     mecab = MeCab.Tagger()
-    morpheme = mecab.parse(sentence)
+    morpheme = mecab.parse(sentence.encode('utf-8'))
     morpheme = morpheme.splitlines()
     words = preprocesse_parts_of_speech(morpheme)
     # words = preprocesse_jct(words)
