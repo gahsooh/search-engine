@@ -69,8 +69,20 @@ if __name__ == '__main__':
 	print 'start get tfidf'
 	tfidf_rdd = (tf_rdd
 					.join(df_rdd)
-					.map(lambda (wordID, ((docID, tf_score), df_score)): 
-						((wordID, docID), round(tf_score * df_score, 5)))
+					.map(lambda (word_id, ((page_id, tf), df)): 
+						((word_id, page_id), round(tf / float(df), 5)))
 					.cache())
+
+	print 'start inverted index'
+	inverted_index_rdd = (barrels_rdd
+							.map(lambda x: (x['page_id'], x['words_with_meta']))
+							.map(lambda (page_id, (word, (is_title, tf))):
+								((word_to_wordID[word], page_id), is_title))
+							.join(tfidf_rdd)
+							.map(lambda ((word_id, page_id), (is_title, tfidf)): 
+								(page_id, (word_id, tfidf, header, style, title))))
+							# .join(ranks_rdd)
+							# .map(lambda (page_id, ((word_id, tfidf, header, style, title), rank)): 
+							# 	(word_id, (page_id, tfidf, header, style, title, rank))))
 
 
