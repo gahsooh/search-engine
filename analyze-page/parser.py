@@ -13,7 +13,7 @@ def get_tf(words):
       return {}
 
     for word, freq in tf:
-      normalized_tf[word] =  round(freq / float(doc_size), 5) 
+      normalized_tf[word] = round(freq / float(doc_size), 5)
 
     return normalized_tf
 
@@ -102,17 +102,20 @@ def get_barrel(soup, sentences, title, url):
 
 def get_barrel_(page):
     content = flatten_text(page.text)
-    words_in_sentences = morphological_analysis(content)
-    tf_in_page = get_tf(words_in_sentences)
+    words = morphological_analysis(content)
+    unique_words = list(set(words))
+    tf_in_page = get_tf(words)
     words_with_meta = integrate_words_attr(
-        words_in_sentences, page._title, tf_in_page)
+        words, page._title, tf_in_page)
 
     barrel = {
         'page_id': page._id,
         'title': page._title,
         'url': page._url,
         'content': content,
-        'words': words_with_meta,
+        'words': words,
+        'unique_words': unique_words,
+        'words_with_meta': words_with_meta
     }
 
     return barrel
