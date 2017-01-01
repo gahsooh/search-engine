@@ -52,6 +52,11 @@ if __name__ == '__main__':
 								.map(lambda x: json.dumps(x))
 								.saveAsTextFile(DOCUMENTS_SAVE_PATH))
 
+	print 'start get pagerank'
+	pageID_rdd = barrel_rdd.map(lambda x: x['page_id'])
+	links_rdd = ''
+	ranks_rdd = pagerank.pagerank(pageID_rdd, links_rdd, 5)
+
 	print 'start get tf'
 	tf_rdd = (barrel_rdd
 				.map(lambda x: (x['page_id'], x['words_with_meta']))
@@ -74,15 +79,28 @@ if __name__ == '__main__':
 					.cache())
 
 	print 'start inverted index'
-	inverted_index_rdd = (barrels_rdd
+	inverted_index_rdd = (barrel_rdd
 							.map(lambda x: (x['page_id'], x['words_with_meta']))
 							.map(lambda (page_id, (word, (is_title, tf))):
 								((word_to_wordID[word], page_id), is_title))
 							.join(tfidf_rdd)
 							.map(lambda ((word_id, page_id), (is_title, tfidf)): 
-								(page_id, (word_id, tfidf, header, style, title))))
-							# .join(ranks_rdd)
-							# .map(lambda (page_id, ((word_id, tfidf, header, style, title), rank)): 
-							# 	(word_id, (page_id, tfidf, header, style, title, rank))))
+								(page_id, (word_id, tfidf, is_title)))
+							.join(ranks_rdd)
+							.map(lambda (page_id, ((word_id, tfidf, is_title), rank)): 
+								(word_id, (page_id, tfidf, is_title, rank))))
+
+	(inverted_index_rdd.map(lambda (w_id, (p, tfidf, is_title, r)): 
+							(w_id, {
+								"page_id": p, 
+								"tfidf": tfidf, 
+								"is_title": is_title, 
+								"pagerank": r
+							}))
+							.groupByKey()
+							.map(lambda (w_id, index): 
+								{"word_id": w_id, "index": list(index)})
+							.map(lambda x: json.dumps(x))
+							.saveAsTextFile('data/inverted_index'))
 
 
