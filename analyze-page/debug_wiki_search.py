@@ -11,6 +11,7 @@ import util
 
 WORD_LIST_SAVE_PATH = 'spark-warehouse/word_list'
 DOCUMENTS_SAVE_PATH = 'spark-warehouse/documents'
+INVERTED_INDEX_SAVE_PATH = 'spark-warehouse/inverted_index'
 
 
 ### test code ###
@@ -54,13 +55,17 @@ if __name__ == '__main__':
 
 	print 'start get pagerank'
 	pageID_rdd = barrel_rdd.map(lambda x: x['page_id'])
-	links_rdd = ''
+	title_to_pageID = (barrel_rdd.map(lambda x: (x['title'], x['page_id']))
+						.distinct()
+						.collectAsMap())
+	links_rdd = (load_local.mysql_to_dataframe(sc).rdd
+					.map(lambda x: (x.pl_from, title_to_pageID.get(x.pl_title, -1))))
 	ranks_rdd = pagerank.pagerank(pageID_rdd, links_rdd, 5)
 
 	print 'start get tf'
 	tf_rdd = (barrel_rdd
-				.map(lambda x: (x['page_id'], x['words_with_meta']))
-				.map(lambda (page_id, (word, (is_title, tf))):
+				.flatMap(lambda x: x['words_with_meta'])
+				.map(lambda (word, (page_id, is_title, tf)):
 					(word_to_wordID[word], (page_id, tf)))
 				.cache())
 
@@ -80,8 +85,8 @@ if __name__ == '__main__':
 
 	print 'start inverted index'
 	inverted_index_rdd = (barrel_rdd
-							.map(lambda x: (x['page_id'], x['words_with_meta']))
-							.map(lambda (page_id, (word, (is_title, tf))):
+							.flatMap(lambda x: x['words_with_meta'])
+							.map(lambda (word, (page_id, is_title, tf)):
 								((word_to_wordID[word], page_id), is_title))
 							.join(tfidf_rdd)
 							.map(lambda ((word_id, page_id), (is_title, tfidf)): 
@@ -101,6 +106,6 @@ if __name__ == '__main__':
 							.map(lambda (w_id, index): 
 								{"word_id": w_id, "index": list(index)})
 							.map(lambda x: json.dumps(x))
-							.saveAsTextFile('data/inverted_index'))
+							.saveAsTextFile(INVERTED_INDEX_SAVE_PATH))
 
 

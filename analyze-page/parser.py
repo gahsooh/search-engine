@@ -106,7 +106,7 @@ def get_barrel_(page):
     unique_words = list(set(words))
     tf_in_page = get_tf(words)
     words_with_meta = integrate_words_attr(
-        words, page._title, tf_in_page)
+        words, page._id, page._title, tf_in_page)
 
     barrel = {
         'page_id': page._id,
@@ -124,8 +124,8 @@ def flatten_text(text):
     delete = {ord(u'\n'): None}
     return text.translate(delete)
 
-def integrate_words_attr(words, title, tf):
-    return [(w, (w == title, tf[w])) for w in words]
+def integrate_words_attr(words, page_id, title, tf):
+    return [(w, (page_id, w == title, tf[w])) for w in words]
 
 # 形態素解析
 def morphological_analysis(sentence):

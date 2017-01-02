@@ -35,6 +35,20 @@ def xml_to_dataframe(sc):
 
 	return df
 
+def mysql_to_dataframe(sc):
+	sqlContext = SQLContext(sc)
+
+	df = (sqlContext.read
+			.format("jdbc")
+			.option("url", "jdbc:mysql://localhost:3306/search_engine?useUnicode=true&characterEncoding=utf-8&characterSetResults=utf-8&useServerPrepStmts=true&useLocalSessionState=true&elideSetAutoCommits=true&alwaysSendSetIsolation=false")
+			.option("user", "root")
+			.option("password", "")
+			.option("dbtable", "debug_pagelinks")
+			.option("driver", "com.mysql.jdbc.Driver")
+			.load())
+
+	return df
+
 
 if __name__ == '__main__':
 	sc = SparkContext(appName="Load Test")
