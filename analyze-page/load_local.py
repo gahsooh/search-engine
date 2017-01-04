@@ -9,19 +9,21 @@ WORD_SUGGEST_PATH = "../data/min/word_suggest/"
 DOCUMENTS_PATH = "../data/min/documents/"
 INVERTED_INDEX_PATH = "../data/min/inverted_index/"
 PARSED_PAGE_PATH = "../data/min/parsed_page/"
-DATA_PATH = "/Users/suganuma/github/search-engine/data/min/raw/page_data_1.txt"
-DATA_PATH_XML = "/Users/suganuma/github/search-engine/data/min/raw/page_data_2.xml"
+DATA_PATH_MIN_JSON = "/Users/suganuma/github/search-engine/data/min/raw/page_data_1.txt"
+DATA_PATH_MIN_XML = "/Users/suganuma/github/search-engine/data/min/raw/page_data_2.xml"
+DATA_PATH_FULL_XML = "/Users/suganuma/github/search-engine/data/arrange/raw/page"
 
 
 def load_page(sc):
-	return sc.textFile(DATA_PATH)
+	return sc.textFile(DATA_PATH_MIN_JSON)
 
-def xml_to_dataframe(sc):
+def pagesToDataframe(sc):
 	sqlContext = SQLContext(sc)
 
+	# Input: XML file
 	xml_format = 'com.databricks.spark.xml'
 	xml_root_tag = 'doc'
-	xml_customSchema = StructType([
+	xml_custom_schema = StructType([
 		StructField("_id", StringType(), True),
 		StructField("_title", StringType(), True),
 		StructField("_url", StringType(), True),
@@ -31,16 +33,17 @@ def xml_to_dataframe(sc):
 			.format(xml_format)
 			.option("charset", "UTF-8")
 			.options(rowTag=xml_root_tag)
-			.load(DATA_PATH_XML, schema = xml_customSchema))
+			.load(DATA_PATH_MIN_XML, schema = xml_custom_schema))
 
 	return df
 
-def mysql_to_dataframe(sc):
+def pagelinksToDataframe(sc):
 	sqlContext = SQLContext(sc)
 
+	# Input: MySQL
 	df = (sqlContext.read
 			.format("jdbc")
-			.option("url", "jdbc:mysql://localhost:3306/search_engine?useUnicode=true&characterEncoding=utf-8&characterSetResults=utf-8&useServerPrepStmts=true&useLocalSessionState=true&elideSetAutoCommits=true&alwaysSendSetIsolation=false")
+			.option("url", "jdbc:mysql://localhost:3306/search_engine")
 			.option("user", "root")
 			.option("password", "")
 			.option("dbtable", "debug_pagelinks")

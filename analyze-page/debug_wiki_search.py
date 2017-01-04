@@ -20,8 +20,8 @@ if __name__ == '__main__':
 	worker_size = 5
 
 	print 'start parse'
-	page_rdd = load_local.xml_to_dataframe(sc).rdd
-	barrel_rdd = page_rdd.map(parser.get_barrel_)
+	page_rdd = load_local.pagesToDataframe(sc).rdd
+	barrel_rdd = page_rdd.map(parser.getBarrel)
 
 	print 'start make wordID list'
 	word_to_wordID_rdd = (barrel_rdd
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 	title_to_pageID = (barrel_rdd.map(lambda x: (x['title'], x['page_id']))
 						.distinct()
 						.collectAsMap())
-	links_rdd = (load_local.mysql_to_dataframe(sc).rdd
+	links_rdd = (load_local.pagelinksToDataframe(sc).rdd
 					.map(lambda x: (x.pl_from, title_to_pageID.get(x.pl_title, -1))))
 	ranks_rdd = pagerank.pagerank(pageID_rdd, links_rdd, 5)
 
