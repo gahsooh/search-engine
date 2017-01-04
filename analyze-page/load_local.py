@@ -14,7 +14,7 @@ DATA_PATH_MIN_XML = "/Users/suganuma/github/search-engine/data/min/raw/page_data
 DATA_PATH_FULL_XML = "/Users/suganuma/github/search-engine/data/arrange/raw/page"
 
 
-def load_page(sc):
+def loadPage(sc):
 	return sc.textFile(DATA_PATH_MIN_JSON)
 
 def pagesToDataframe(sc):

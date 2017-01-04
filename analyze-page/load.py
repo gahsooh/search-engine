@@ -9,7 +9,7 @@ INVERTED_INDEX_PATH = "s3n://"
 PARSED_PAGE_PATH = "s3n://"
 DATA_PATH = "s3n://search-engine-storage/min/0000.xml"
 
-def load_page(sc):
+def loadPage(sc):
   return sc.textFile(DATA_PATH)
 
 if __name__ == '__main__':
